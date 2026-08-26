@@ -13,6 +13,10 @@ public partial class VoucherType : BaseAliasedMasterObject
     [XmlElement(ElementName = "NUMBERINGMETHOD")]
     public string? NumberingMethod { get; set; }
 
+    [XmlElement(ElementName = "VOUCHERNUMBERSERIES.LIST")]
+    [TDLCollection(CollectionName = "VOUCHERNUMBERSERIES")]
+    public List<VoucherNumberSeries>? NumberingSeries { get; set; }
+
     [XmlElement(ElementName = "USEZEROENTRIES")]
     public bool? UseZeroEntries { get; set; }
 
@@ -91,6 +95,16 @@ public partial class VoucherType : BaseAliasedMasterObject
                                    CoreVchtypeFormulae1 + CoreVchtypeFormulae2 + CoreVchtypeFormulae3]) { IsModify = YesNo.Yes }];
     }
 }
+
+public partial class VoucherNumberSeries
+{
+    [XmlElement(ElementName = "NAME")]
+    public string? Name { get; set; }
+
+    [XmlElement(ElementName = "NUMBERINGMETHOD")]
+    public string? NumberingMethod { get; set; }
+}
+
 public partial class VoucherClass
 {
     [XmlElement(ElementName = "CLASSNAME")]
