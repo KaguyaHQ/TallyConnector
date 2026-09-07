@@ -71,6 +71,9 @@ public partial class Ledger : BaseAliasedMasterObject
     [XmlElement(ElementName = "GSTTYPEOFSUPPLY")]
     public GSTTypeOfSupply? GSTTypeOfSupply { get; set; }
 
+    [XmlElement(ElementName = "GSTAPPLICABLE")]
+    public string? GSTApplicable { get; set; }
+
     [XmlElement(ElementName = "BANKINGCONFIGBANK")]
     public string? BankName { get; set; }
 

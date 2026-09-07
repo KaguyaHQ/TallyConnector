@@ -50,6 +50,9 @@ public partial class GSTDetail
 public partial class StateWiseDetail
 {
     [XmlElement(ElementName = "STATENAME")]
+    // Tally's system "Any" state may read as empty. A repeated line whose
+    // only field is invisible aborts the entire Tally process.
+    [TDLField(Invisible = "No")]
     public string? StateName { get; set; }
 
     [XmlElement(ElementName = "RATEDETAILS.LIST")]    

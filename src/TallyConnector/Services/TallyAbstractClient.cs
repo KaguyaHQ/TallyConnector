@@ -349,11 +349,23 @@ public abstract class TallyAbstractClient : ITallyAbstractClient
         }
 
         using var requestStream = new MemoryStream();
-        await GenericXmlStreamer.WriteDataToStreamAsync(requestStream, postEnvelope, new XmlSerializationOptions { Encoding = Encoding.Unicode, IgnoreNullValues = true });
+        // Tally system names contain U+0004 (e.g. "Any"). Its XML dialect
+        // requires the numeric character reference emitted by this writer.
+        using (var writer = System.Xml.XmlWriter.Create(requestStream, new System.Xml.XmlWriterSettings
+        {
+            Encoding = Encoding.Unicode, CheckCharacters = false, CloseOutput = false, OmitXmlDeclaration = false
+        }))
+        {
+            postEnvelope.WriteToXml(new XmlSerializationOptions { IgnoreNullValues = true }).WriteTo(writer);
+        }
         requestStream.Position = 0;
 
+        // Tally accepts decimal control references, not XmlWriter's hex form.
+        var xml = Encoding.Unicode.GetString(requestStream.ToArray()).Replace("&#x4;", "&#4;", StringComparison.Ordinal);
+        requestStream.SetLength(0);
+        await requestStream.WriteAsync(Encoding.Unicode.GetBytes(xml), token);
+        requestStream.Position = 0;
         using var resp = await _baseHandler.SendRequestAsStreamAsync(requestStream, "Posting Objects", token);
-
         var respEnvelope = GenericXmlStreamer.ReadDataFromStream<PostResponseEnvelope>(resp);
         return respEnvelope?.Objects ?? [];
     }
